@@ -139,6 +139,7 @@ var transactparser = parse({delimiter: ','}, function(err, data){
   });
 });
 
+                  // THIS IS THE LINE THAT YOU NEED TO UNCOMMENT
 //fs.createReadStream(inputFile).pipe(parser);
 
 // middleware:
@@ -195,10 +196,10 @@ app.get('/datathon', function(req, res) {
 
 // GET
 
-app.get('/datathon/customer', function(req, res) {
-  res.contentType('application/json');
-  res.status(200).send(JSON.stringify(result));
-});
+// app.get('/datathon/customer', function(req, res) {
+//   res.contentType('application/json');
+//   res.status(200).send(JSON.stringify(result));
+// });
 
 
 
@@ -212,27 +213,27 @@ app.get('/datathon/customer/:id', function(req, res) {
         assert.equal(err, null);
         if (doc !== null) {
           callback(doc);
-          found = true
+          found = true;
         } else {
           if(found === false)
-            callback({"error": "Customer with id '" + req.params.id + "' not found"})
+            callback({"error": "Customer with id '" + req.params.id + "' not found"});
         }
      });
-  };
+   };
 
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
-    findCustomer(db, req.params.id, function(resultorino) {
-        result = resultorino;
-        if(result["error"] !== null){
-          res.status(404);
-        }else{
-          res.status(200);
-        }
-        res.contentType('application/json');
-        res.json(result);
-        db.close();
-    });
+    MongoClient.connect(url, function(err, db) {
+      assert.equal(null, err);
+      findCustomer(db, req.params.id, function(resultorino) {
+          result = resultorino;
+          if(result["error"] !== null){
+            res.status(404);
+          }else{
+            res.status(200);
+          }
+          res.contentType('application/json');
+          res.json(result);
+          db.close();
+      });
   });
   /*if (found === false) {
     result = ;
@@ -241,8 +242,6 @@ app.get('/datathon/customer/:id', function(req, res) {
   else{
     res.status(200);
   }*/
-
-
 });
 
 // PUT
