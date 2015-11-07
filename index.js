@@ -4,7 +4,9 @@ var express = require('express');
 // Create a HTTP server app.
 var app = express();
 
-
+// body parser is needed to parse the data from the body
+var bodyParser = require('body-parser');
+app.use(bodyParser());
 
 // middleware:
 // Add headers
@@ -32,5 +34,18 @@ app.get('/datathon', function(req, res) {
   result.push({id: 0, header: "Datathon", info: "Customer Insights"});
 
   res.contentType('application/json');
-  res.send(JSON.stringify(result));
+  res.status(200).send(JSON.stringify(result));
 });
+
+app.get('/datathon', function(req, res) {
+  var result = [];
+  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
+
+  res.contentType('application/json');
+  res.status(200).send(JSON.stringify(result));
+});
+
+// Start the server.
+var server = app.listen(8000);
+
+console.log("Web Service running on localhost:8000");
