@@ -2,11 +2,7 @@
 var express = require('express');
 var fs = require('fs');
 var parse = require('csv-parse');
-
-var test = require('assert');
-
-var path = require('path');
-
+ test = require('assert');
 // Creete a couch connector instance
 
 // Create a HTTP server app.
@@ -24,6 +20,17 @@ MongoClient.connect(url, function(err, db) {
   db.close();
 });
 
+var updateCustomer = function(db, myInc, myPayDay, id, callback) {
+   db.collection('customers').updateOne(
+      { "_id" : id },
+      {
+        $set: { "income": myInc },
+        $currentDate: { "payday": myPayDay }
+      }, function(err, results) {
+      //console.log(results);
+      callback();
+   });
+};
 
 // body parser is needed to parse the data from the body
 var bodyParser = require('body-parser');
@@ -31,40 +38,100 @@ app.use(bodyParser());
 
 
 var inputFile='Balances.csv';
-var customers = [];
+var incomeFile='Income.csv';
+var demoFile='Demographics.csv';
+var rentFile='Rent.csv';
+var transactFile='Transactions.csv';
+
+var customers = new Object();
 var parser = parse({delimiter: ','}, function (err, data) {
   data.forEach(function (line) {
     // do something with the line
     var customer = {};
     customer._id = line[0];
     customer.balance = parseInt(line[1]);
-    customers.push(customer);
+    customers[customer._id] = customer;
   });
+  fs.createReadStream(incomeFile).pipe(incomeparser);
+});
+
+var incomeparser = parse({delimiter: ','}, function (err, data) {
+  data.forEach(function (line) {
+    // do something with the line
+    customers[line[0]].income = parseInt(line[1]);
+    customers[line[0]].payday = parseInt(line[2]);
+  });
+  fs.createReadStream(demoFile).pipe(demoParser);
+});
+
+var demoParser = parse({delimiter: ','}, function(err, data){
+  data.forEach(function(line){
+      customers[line[0]].age = parseInt(line[1]);
+      customers[line[0]].sex = line[2];
+      customers[line[0]].county = line[3];
+  });
+
+  console.log(customers["8878"]);
+  fs.createReadStream(rentFile).pipe(rentparser);
+});
+
+var rentparser = parse({delimiter: ','}, function(err, data){
+  data.forEach(function (line){
+    if(customers[line[0]].rent_transactions === undefined){
+      customers[line[0]].rent_transactions = [];
+    }
+
+    var rentDate = new Date(line[1].replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3"));
+    customers[line[0]].rent_transactions.push({"rent_date": rentDate, "ammount": parseInt(line[2])});
+  });
+
+  fs.createReadStream(transactFile).pipe(transactparser);
+});
+
+var uploadList =[];
+var transactparser = parse({delimiter: ','}, function(err, data){
+  data.forEach(function(line){
+    if(customers[line[0]].transactions === undefined){
+      customers[line[0]].transactions = [];
+    }
+
+    var transactionDate = new Date(line[1].replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3"));
+
+    if(line[3] === 'Magazines'){
+      if(line[7] === 'D'){
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": "Newspapers, Magazines, & Books", "ammount": parseInt(line[6]), "type": line[7]});
+      }else{
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": "Newspapers, Magazines, & Books", "ammount": parseInt(line[6]) * -1, "type": line[7]});
+      }
+
+    }
+    else{
+      if(line[4] === 'D'){
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]), "type": line[4]});
+      }else{
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]) *-1, "type": line[4]});
+      }
+
+    }
+  });
+
+  console.log('done - pushing to database');
+  for (var property in customers) {
+      if (customers.hasOwnProperty(property)) {
+        uploadList.push(customers[property]);
+      }
+  }
+  customers = null;
 
   MongoClient.connect(url, function(err, db) {
   // Get the collection
     var col = db.collection('customers');
-    col.insertMany(customers, function(err, r) {
+    col.insertMany(uploadList, function(err, r) {
       test.equal(null, err);
       console.log(r.insertedCount);
       // Finish up test
       db.close();
     });
-  });
-});
-
-
-var incomeparser = parse({delimiter: ','}, function (err, data) {
-  data.forEach(function (line) {
-    // do something with the line
-    var customer = {};
-    customer._id = line[0];
-    customer.income = parseInt(line[1]);
-    customer.payday = parseInt(line[2]);
-    for(i = 0; i < 100000; i++){
-
-    }
-    updateCustomer(customer._id, customer.income, customer.payday);
   });
 });
 
@@ -91,52 +158,20 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.set('view engine', 'jade');
+app.get('/datathon', function(req, res) {
+  var result = [];
+  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
 
-// MOCK DATA
-var customers = [];
-var customer;
-var ronan = {"id": 10, "name": "Ronan", "balance": 2300.23};
-var john = {"id": 11, "name": "John", "balance": 3200.32};
-customers.push(ronan);
-customers.push(john);
-
-// ROUTES
-
-app.get('/', function(req, res) {
-  //var result = {"header": "API Homepage", "info": "Go to /datathon to access customer insights"};
-
-  res.contentType('text/html');
-  //res.status(200).json(result);
-  res.status(200).sendFile(path.join(__dirname + '/views/index.html'));
+  res.contentType('application/json');
+  res.status(200).send(JSON.stringify(result));
 });
 
 app.get('/datathon', function(req, res) {
-  //var result = {"header": "Datathon", "info": "Customer Insights", "usage": "/datathon/:id = get user info by id"};
-
-  res.contentType('text/html');
-  res.status(200).sendFile(path.join(__dirname + '/views/datathon.html'));
-});
-
-app.get('/datathon/customer', function(req, res) {
-  res.contentType('application/json');
-  res.status(200).json(customers);
-});
-
-app.get('/datathon/customer/:id', function(req, res) {
-  for (var i = 0; i < customers.length; i++) {
-    if (customers[i].id == req.params.id) {
-      customer = customers[i];
-      break;
-    }
-    //console.log(JSON.stringify(customers[i]));
-  }
-
-  // console.log(JSON.stringify(customers));
-  // console.log(JSON.stringify(customer));
+  var result = [];
+  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
 
   res.contentType('application/json');
-  res.status(200).json(customer);  //send(JSON.stringify(customer));
+  res.status(200).send(JSON.stringify(result));
 });
 
 // Start the server.
