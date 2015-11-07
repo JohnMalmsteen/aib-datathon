@@ -139,7 +139,7 @@ var transactparser = parse({delimiter: ','}, function(err, data){
   });
 });
 
-fs.createReadStream(inputFile).pipe(parser);
+//fs.createReadStream(inputFile).pipe(parser);
 
 // middleware:
 // Add headers
@@ -201,63 +201,53 @@ app.get('/datathon/customer', function(req, res) {
 });
 
 
-app.get('/datathon/customer/:id', function(req, res) {
-  var result;
-  var found = false;
-  for (var i = 0; i < customers.length; i++) {
-    //console.log(parseInt(customers[i]._id));
-    if (parseInt(customers[i]._id) == req.params.id) {
-      result = customers[i];
-      found = true;
-      break;
-    }
-    //console.log(JSON.stringify(customers[i]));
-  }
 
-  if (found === false) {
-    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
+
+app.get('/datathon/customer/:id', function(req, res) {
+  var result = null;
+  var found = false;
+  var findCustomer = function(db, id, callback) {
+     var cursor =db.collection('customers').find( { "_id": id } );
+     cursor.each(function(err, doc) {
+        assert.equal(err, null);
+        if (doc !== null) {
+          callback(doc);
+          found = true
+        } else {
+          if(found === false)
+            callback({"error": "Customer with id '" + req.params.id + "' not found"})
+        }
+     });
+  };
+
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    findCustomer(db, req.params.id, function(resultorino) {
+        result = resultorino;
+        if(result["error"] !== null){
+          res.status(404);
+        }else{
+          res.status(200);
+        }
+        res.contentType('application/json');
+        res.json(result);
+        db.close();
+    });
+  });
+  /*if (found === false) {
+    result = ;
     res.status(404);
   }
   else{
     res.status(200);
-  }
+  }*/
 
-  // console.log(JSON.stringify(customers));
-  // console.log(JSON.stringify(customer));
 
-  res.contentType('application/json');
-  res.json(result);  //send(JSON.stringify(customer));
 });
 
 // PUT
 app.put('/datathon/customer/:id', function(req, res) {
-  // var customer = {};
-  // customer._id = customers.length;
-  // customer.balance = req.body.balance;
-  // customers.push(customer);
 
-  var result;
-  var found = false;
-  for (var i = 0; i < customers.length; i++) {
-    if (parseInt(customers[i]._id) == req.params.id) {
-      result = customers[i];
-      result.balance = req.body.balance;
-      result.status = req.body.status;
-      found = true;
-      break;
-    }
-  }
-
-  if (found === false) {
-    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
-    res.status(404);
-  }
-  else{
-    res.status(200);
-  }
-
-  res.contentType('application/json');
-  res.json(result);
 });
 
 // POST
