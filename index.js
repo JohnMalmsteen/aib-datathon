@@ -1,12 +1,27 @@
 // Import express to create and configure the HTTP server.
 var express = require('express');
+var fs = require('fs');
+var parse = require('csv-parse');
+var async = require('async');
 
 // Create a HTTP server app.
 var app = express();
+app.set('port', (process.env.PORT || 5000));
 
 // body parser is needed to parse the data from the body
 var bodyParser = require('body-parser');
 app.use(bodyParser());
+
+var inputFile='Balances.csv';
+
+var parser = parse({delimiter: ','}, function (err, data) {
+  async.eachSeries(data, function (line, callback) {
+    // do something with the line
+    console.log(line);
+    callback();
+  });
+});
+fs.createReadStream(inputFile).pipe(parser);
 
 // middleware:
 // Add headers
@@ -46,6 +61,6 @@ app.get('/datathon', function(req, res) {
 });
 
 // Start the server.
-var server = app.listen(8000);
-
-console.log("Web Service running on localhost:8000");
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
