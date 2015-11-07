@@ -2,12 +2,10 @@
 var express = require('express');
 var fs = require('fs');
 var parse = require('csv-parse');
-
 var test = require('assert');
-
 var path = require('path');
 
-// Creete a couch connector instance
+// Create a couch connector instance
 
 // Create a HTTP server app.
 var app = express();
@@ -96,10 +94,10 @@ app.set('view engine', 'jade');
 // MOCK DATA
 var customers = [];
 var customer;
-var ronan = {"id": 10, "name": "Ronan", "balance": 2300.23};
-var john = {"id": 11, "name": "John", "balance": 3200.32};
-customers.push(ronan);
-customers.push(john);
+// var ronan = {"id": 10, "name": "Ronan", "balance": 2300.23};
+// var john = {"id": 11, "name": "John", "balance": 3200.32};
+// customers.push(ronan);
+// customers.push(john);
 
 // ROUTES
 
@@ -124,19 +122,31 @@ app.get('/datathon/customer', function(req, res) {
 });
 
 app.get('/datathon/customer/:id', function(req, res) {
+  var result;
+  var found = false;
   for (var i = 0; i < customers.length; i++) {
-    if (customers[i].id == req.params.id) {
-      customer = customers[i];
+    //console.log(parseInt(customers[i]._id));
+    if (parseInt(customers[i]._id) == req.params.id) {
+      result = customers[i];
+      found = true;
       break;
     }
     //console.log(JSON.stringify(customers[i]));
+  }
+
+  if (found === false) {
+    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
+    res.status(404);
+  }
+  else{
+    res.status(200);
   }
 
   // console.log(JSON.stringify(customers));
   // console.log(JSON.stringify(customer));
 
   res.contentType('application/json');
-  res.status(200).json(customer);  //send(JSON.stringify(customer));
+  res.json(result);  //send(JSON.stringify(customer));
 });
 
 // Start the server.
