@@ -3,9 +3,22 @@ var express = require('express');
 var fs = require('fs');
 var parse = require('csv-parse');
 var async = require('async');
+// Creete a couch connector instance
 
 // Create a HTTP server app.
 var app = express();
+
+var nodeCouchDB = require("node-couchdb");
+var couch = new nodeCouchDB("localhost", 5984);
+// insert a document
+function insertCustomer(cust){
+  couch.insert("customers", cust, function (err, resData) {
+      if (err)
+          return console.error(err);
+      //console.dir(resData)
+  });
+}
+
 
 
 var inputFile='Balances.csv';
@@ -13,7 +26,10 @@ var inputFile='Balances.csv';
 var parser = parse({delimiter: ','}, function (err, data) {
   async.eachSeries(data, function (line, callback) {
     // do something with the line
-    console.log(line);
+    var customer = {};
+    customer._id = line[0];
+    customer.balance = parseInt(line[1]);
+    insertCustomer(customer);
     callback();
   });
 });
