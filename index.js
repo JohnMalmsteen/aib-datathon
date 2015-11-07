@@ -1,9 +1,23 @@
 // Import express to create and configure the HTTP server.
 var express = require('express');
+var fs = require('fs');
+var parse = require('csv-parse');
+var async = require('async');
 
 // Create a HTTP server app.
 var app = express();
 
+
+var inputFile='Balances.csv';
+
+var parser = parse({delimiter: ','}, function (err, data) {
+  async.eachSeries(data, function (line, callback) {
+    // do something with the line
+    console.log(line);
+    callback();
+  });
+});
+fs.createReadStream(inputFile).pipe(parser);
 
 
 // middleware:
