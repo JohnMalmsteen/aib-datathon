@@ -36,6 +36,7 @@ var parser = parse({delimiter: ','}, function (err, data) {
     var customer = {};
     customer._id = line[0];
     customer.balance = parseInt(line[1]);
+    customer.status = "open";
     customers.push(customer);
   });
 
@@ -94,13 +95,16 @@ app.set('view engine', 'jade');
 // MOCK DATA
 var customers = [];
 var customer;
-// var ronan = {"id": 10, "name": "Ronan", "balance": 2300.23};
-// var john = {"id": 11, "name": "John", "balance": 3200.32};
+var ronan = {"_id": "10", "name": "Ronan", "balance": 2300, "status": "open", "income": 2500, "payday": 1, "age":38, "sex": "M", "county": "LEITRIM", "transactions": [{"EPOCH": "11/02/2015", "CATEGORY": "Auto", "SUBCATEGORY": "Petrol/fuel", "TRANS_AMOUNT": 40, "TRANS_TYP": "D"}], "rent": [{"DATE": "05/08/2014", "AMMOUNT": 1000}, {"DATE": "02/09/2014": "AMMOUNT": 800}]};
+var john = {"_id": "11", "name": "John", "balance": 3200};
 // customers.push(ronan);
 // customers.push(john);
 
+// post transactions and rent/morgage
+
 // ROUTES
 
+// HTML HOME PAGES
 app.get('/', function(req, res) {
   //var result = {"header": "API Homepage", "info": "Go to /datathon to access customer insights"};
 
@@ -115,6 +119,8 @@ app.get('/datathon', function(req, res) {
   res.contentType('text/html');
   res.status(200).sendFile(path.join(__dirname + '/views/datathon.html'));
 });
+
+// GET
 
 app.get('/datathon/customer', function(req, res) {
   res.contentType('application/json');
@@ -148,6 +154,90 @@ app.get('/datathon/customer/:id', function(req, res) {
   res.contentType('application/json');
   res.json(result);  //send(JSON.stringify(customer));
 });
+
+// PUT
+app.put('/datathon/customer/:id', function(req, res) {
+  // var customer = {};
+  // customer._id = customers.length;
+  // customer.balance = req.body.balance;
+  // customers.push(customer);
+
+  var result;
+  var found = false;
+  for (var i = 0; i < customers.length; i++) {
+    if (parseInt(customers[i]._id) == req.params.id) {
+      result = customers[i];
+      result.balance = req.body.balance;
+      result.status = req.body.status;
+      found = true;
+      break;
+    }
+  }
+
+  if (found === false) {
+    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
+    res.status(404);
+  }
+  else{
+    res.status(200);
+  }
+
+  res.contentType('application/json');
+  res.json(result);
+});
+
+// POST
+app.post('/datathon/customer', function(req, res) {
+  var customer = {};
+  // need to get length from db
+  customer._id = customers.length;
+  customer.balance = req.body.balance;
+  customer.status = "open";
+  customer.sex = req.body.sex.toUpperCase();
+  customer.county = req.body.county.toUpperCase();
+
+  if (true) {
+    customers.push(customer);
+    result = customer;
+    res.status(200);
+  }
+  else {
+    result = {"error": "Arguments missing, check API at /datathon for more information."};
+    res.status(400);
+  }
+
+
+
+
+  res.contentType('application/json');
+  res.json(result);
+});
+
+// DELETE
+app.delete('/datathon/customer/:id', function(req, res) {
+  var result;
+  var found = false;
+  for (var i = 0; i < customers.length; i++) {
+    if (parseInt(customers[i]._id) == req.params.id) {
+      result = customers[i];
+      result.status = "closed";
+      found = true;
+      break;
+    }
+  }
+
+  if (found === false) {
+    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
+    res.status(404);
+  }
+  else{
+    res.status(200);
+  }
+
+  res.contentType('application/json');
+  res.json(result);
+});
+
 
 // Start the server.
 app.listen(app.get('port'), function() {
