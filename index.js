@@ -110,10 +110,10 @@ var transactparser = parse({delimiter: ','}, function(err, data){
 
     }
     else{
-      if(line[4] === 'D'){
-        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]), "type": line[4]});
+      if(line[5] === 'D'){
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]), "type": line[5]});
       }else{
-        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]) *-1, "type": line[4]});
+        customers[line[0]].transactions.push({"date": transactionDate, "category": line[2], "subcategory": line[3], "ammount": parseInt(line[4]) *-1, "type": line[5]});
       }
 
     }
