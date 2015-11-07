@@ -2,7 +2,11 @@
 var express = require('express');
 var fs = require('fs');
 var parse = require('csv-parse');
- test = require('assert');
+
+var test = require('assert');
+
+var path = require('path');
+
 // Creete a couch connector instance
 
 // Create a HTTP server app.
@@ -20,14 +24,6 @@ MongoClient.connect(url, function(err, db) {
   db.close();
 });
 
-// insert a document
-var insertDocument = function(db, cust, callback) {
-   db.collection('customers').insertOne( cust, function(err, result) {
-    assert.equal(err, null);
-    console.log("Inserted a document into the restaurants collection.");
-    callback(result);
-  });
-};
 
 // body parser is needed to parse the data from the body
 var bodyParser = require('body-parser');
@@ -95,20 +91,52 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/datathon', function(req, res) {
-  var result = [];
-  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
+app.set('view engine', 'jade');
 
-  res.contentType('application/json');
-  res.status(200).send(JSON.stringify(result));
+// MOCK DATA
+var customers = [];
+var customer;
+var ronan = {"id": 10, "name": "Ronan", "balance": 2300.23};
+var john = {"id": 11, "name": "John", "balance": 3200.32};
+customers.push(ronan);
+customers.push(john);
+
+// ROUTES
+
+app.get('/', function(req, res) {
+  //var result = {"header": "API Homepage", "info": "Go to /datathon to access customer insights"};
+
+  res.contentType('text/html');
+  //res.status(200).json(result);
+  res.status(200).sendFile(path.join(__dirname + '/views/index.html'));
 });
 
 app.get('/datathon', function(req, res) {
-  var result = [];
-  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
+  //var result = {"header": "Datathon", "info": "Customer Insights", "usage": "/datathon/:id = get user info by id"};
+
+  res.contentType('text/html');
+  res.status(200).sendFile(path.join(__dirname + '/views/datathon.html'));
+});
+
+app.get('/datathon/customer', function(req, res) {
+  res.contentType('application/json');
+  res.status(200).json(customers);
+});
+
+app.get('/datathon/customer/:id', function(req, res) {
+  for (var i = 0; i < customers.length; i++) {
+    if (customers[i].id == req.params.id) {
+      customer = customers[i];
+      break;
+    }
+    //console.log(JSON.stringify(customers[i]));
+  }
+
+  // console.log(JSON.stringify(customers));
+  // console.log(JSON.stringify(customer));
 
   res.contentType('application/json');
-  res.status(200).send(JSON.stringify(result));
+  res.status(200).json(customer);  //send(JSON.stringify(customer));
 });
 
 // Start the server.
