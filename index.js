@@ -7,6 +7,7 @@ var async = require('async');
 
 // Create a HTTP server app.
 var app = express();
+app.set('port', (process.env.PORT || 5000));
 
 var nodeCouchDB = require("node-couchdb");
 var couch = new nodeCouchDB("localhost", 5984);
@@ -19,6 +20,10 @@ function insertCustomer(cust){
   });
 }
 
+
+// body parser is needed to parse the data from the body
+var bodyParser = require('body-parser');
+app.use(bodyParser());
 
 
 var inputFile='Balances.csv';
@@ -34,7 +39,6 @@ var parser = parse({delimiter: ','}, function (err, data) {
   });
 });
 fs.createReadStream(inputFile).pipe(parser);
-
 
 // middleware:
 // Add headers
@@ -62,5 +66,18 @@ app.get('/datathon', function(req, res) {
   result.push({id: 0, header: "Datathon", info: "Customer Insights"});
 
   res.contentType('application/json');
-  res.send(JSON.stringify(result));
+  res.status(200).send(JSON.stringify(result));
+});
+
+app.get('/datathon', function(req, res) {
+  var result = [];
+  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
+
+  res.contentType('application/json');
+  res.status(200).send(JSON.stringify(result));
+});
+
+// Start the server.
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });

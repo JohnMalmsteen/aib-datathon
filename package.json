@@ -4,7 +4,8 @@
   "description": "insights into customer data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node test-server.js"
   },
   "repository": {
     "type": "git",
@@ -16,19 +17,24 @@
     "datathon",
     "banking",
     "spending",
-    "insights"
+    "insights",
+    "LMHM"
   ],
-  "author": "John Frizzell & Ronan Connolly",
+  "author": "Ronan Connolly & John Frizzell",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/JohnMalmsteen/aib-datathon/issues"
   },
   "homepage": "https://github.com/JohnMalmsteen/aib-datathon#readme",
   "dependencies": {
+    "body-parser": "^1.14.1",
     "async": "^1.5.0",
     "csv-parse": "^1.0.0",
     "express": "^4.13.3",
-    "fs": "0.0.2",
-    "node-couchdb": "^0.4.0"
+    "node-couchdb": "^0.4.0",
+    "fs": "0.0.2"
+  },
+  "engine": {
+    "node": "4.2.1"
   }
 }
