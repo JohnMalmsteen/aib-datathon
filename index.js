@@ -4,6 +4,7 @@ var fs = require('fs');
 var parse = require('csv-parse');
 
 
+
 var test = require('assert');
 var path = require('path');
 
@@ -21,6 +22,103 @@ MongoClient.connect(url, function(err, db) {
   console.log("Connected correctly to server.");
   db.close();
 });
+
+var stream = fs.createWriteStream('./data.csv', { flags: 'w',
+  defaultEncoding: 'utf8',
+  fd: null,
+  mode: 0o666 });
+
+var findCustomer = function(db, callback) {
+   var cursor =db.collection('customers').find( );
+   cursor.each(function(err, doc) {
+      assert.equal(err, null);
+      if (doc !== null) {
+        result = doc;
+        var latest = new Date();
+        var currentDate = new Date(2015, 12, 2, 0, 0, 0, 0);
+        var spendLim = result.balance;
+        var first = true;
+        var lastRent;
+        for(var property in result.rent_transactions){
+          if (first){
+            latest = result.rent_transactions[property].rent_date;
+            lastRent = result.rent_transactions[property].ammount;
+            first = false;
+          }else{
+            if (Date.parse(result.rent_transactions[property].rent_date) > Date.parse(latest)){
+              latest = result.rent_transactions[property].rent_date;
+              lastRent = result.rent_transactions[property].ammount;
+            }
+          }
+        }
+        if(latest.getDate() > 2 && latest.getDate() < result.payday){
+          spendLim -= lastRent;
+        }
+        var timeTilPayDay;
+        if(result.payday > 2){
+          timeTilPayDay = result.payday - 2;
+        }
+        else {
+          timeTilPayDay = 30-2;
+        }
+        var oldest;
+        var newest;
+        var total = 0;
+        first = true;
+        for(var property in result.transactions){
+          if(first){
+            oldest = result.transactions[property].date;
+            newest = result.transactions[property].date;
+            first = false;
+          }else{
+            if(Date.parse(result.transactions[property].date) < Date.parse(oldest)){
+              oldest = result.transactions[property].date;
+            }
+
+            if(Date.parse(result.transactions[property].date) > Date.parse(newest)){
+              newest = result.transactions[property].date;
+            }
+
+          }
+
+          if(!isNaN(result.transactions[property].ammount))
+            total += result.transactions[property].ammount;
+        }
+
+
+        var numberofdays = (Date.parse(newest) - Date.parse(oldest))/(1000*60*60*24);
+
+        var spendperday = total/numberofdays;
+
+        spendLim -= (spendperday * timeTilPayDay);
+
+        spendLim *= .7;
+        if(isNaN(spendLim) || spendLim === Infinity)
+        {
+          spendLim = 500;
+        }
+        console.log(result._id);
+        stream.write(result._id + ", " + spendLim + '\n');
+      } else {
+        callback()
+      }
+   });
+
+};
+
+
+
+/*MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  findCustomer(db, function() {
+      stream.end();
+      db.close();
+
+  });
+});
+*/
+
+
 
 var updateCustomer = function(db, myInc, myPayDay, id, callback) {
    db.collection('customers').updateOne(
@@ -94,6 +192,7 @@ var rentparser = parse({delimiter: ','}, function(err, data){
 
 var uploadList =[];
 var transactparser = parse({delimiter: ','}, function(err, data){
+  var first = true;
   data.forEach(function(line){
     if(customers[line[0]].transactions === undefined){
       customers[line[0]].transactions = [];
@@ -127,6 +226,7 @@ var transactparser = parse({delimiter: ','}, function(err, data){
   }
   customers = null;
 
+
   MongoClient.connect(url, function(err, db) {
   // Get the collection
     var col = db.collection('customers');
@@ -139,7 +239,6 @@ var transactparser = parse({delimiter: ','}, function(err, data){
   });
 });
 
-                  // THIS IS THE LINE THAT YOU NEED TO UNCOMMENT
 //fs.createReadStream(inputFile).pipe(parser);
 
 // middleware:
@@ -196,10 +295,10 @@ app.get('/datathon', function(req, res) {
 
 // GET
 
-// app.get('/datathon/customer', function(req, res) {
-//   res.contentType('application/json');
-//   res.status(200).send(JSON.stringify(result));
-// });
+app.get('/datathon/customer', function(req, res) {
+  res.contentType('application/json');
+  res.status(200).send(JSON.stringify(result));
+});
 
 
 
@@ -213,35 +312,29 @@ app.get('/datathon/customer/:id', function(req, res) {
         assert.equal(err, null);
         if (doc !== null) {
           callback(doc);
-          found = true;
+          found = true
         } else {
           if(found === false)
-            callback({"error": "Customer with id '" + req.params.id + "' not found"});
+            callback({"error": "Customer with id '" + req.params.id + "' not found"})
         }
      });
-   };
+  };
 
-    MongoClient.connect(url, function(err, db) {
-      assert.equal(null, err);
-      findCustomer(db, req.params.id, function(resultorino) {
-          result = resultorino;
-          if(result["error"] !== null){
-            res.status(404);
-          }else{
-            res.status(200);
-          }
-          res.contentType('application/json');
-          res.json(result);
-          db.close();
-      });
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    findCustomer(db, req.params.id, function(resultorino) {
+        result = resultorino;
+        if(result["error"] !== null){
+          res.status(404);
+        }else{
+          res.status(200);
+        }
+        res.contentType('application/json');
+        res.json(result);
+        db.close();
+    });
   });
-  /*if (found === false) {
-    result = ;
-    res.status(404);
-  }
-  else{
-    res.status(200);
-  }*/
+
 });
 
 // PUT
