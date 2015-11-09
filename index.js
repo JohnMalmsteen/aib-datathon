@@ -2,9 +2,6 @@
 var express = require('express');
 var fs = require('fs');
 var parse = require('csv-parse');
-
-
-
 var test = require('assert');
 var path = require('path');
 
@@ -295,13 +292,10 @@ app.get('/datathon', function(req, res) {
 
 // GET
 
-app.get('/datathon/customer', function(req, res) {
-  res.contentType('application/json');
-  res.status(200).send(JSON.stringify(result));
-});
-
-
-
+// app.get('/datathon/customer', function(req, res) {
+//   res.contentType('application/json');
+//   res.status(200).send(JSON.stringify(result));
+// });
 
 app.get('/datathon/customer/:id', function(req, res) {
   var result = null;
@@ -312,10 +306,10 @@ app.get('/datathon/customer/:id', function(req, res) {
         assert.equal(err, null);
         if (doc !== null) {
           callback(doc);
-          found = true
+          found = true;
         } else {
           if(found === false)
-            callback({"error": "Customer with id '" + req.params.id + "' not found"})
+            callback({"error": "Customer with id '" + req.params.id + "' not found"});
         }
      });
   };
@@ -324,7 +318,9 @@ app.get('/datathon/customer/:id', function(req, res) {
     assert.equal(null, err);
     findCustomer(db, req.params.id, function(resultorino) {
         result = resultorino;
-        if(result["error"] !== null){
+        //console.log("\n\nresult: " + JSON.stringify(result));
+        //console.log("\n\nresult.error: " + result.error);
+        if(result.error !== undefined){
           res.status(404);
         }else{
           res.status(200);
