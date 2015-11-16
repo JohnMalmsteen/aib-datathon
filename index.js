@@ -24,6 +24,7 @@ var stream = fs.createWriteStream('./data.csv', { flags: 'w',
   defaultEncoding: 'utf8',
   fd: null,
   mode: 0o666 });
+  // 0o666 mode causes an error on the digital ocean server, 0666 works fine however
 
 var findCustomer = function(db, callback) {
    var cursor =db.collection('customers').find( );
@@ -89,7 +90,7 @@ var findCustomer = function(db, callback) {
 
         spendLim -= (spendperday * timeTilPayDay);
 
-        spendLim *= .7;
+        spendLim *= 0.7;
         if(isNaN(spendLim) || spendLim === Infinity)
         {
           spendLim = 500;
@@ -97,7 +98,7 @@ var findCustomer = function(db, callback) {
         console.log(result._id);
         stream.write(result._id + ", " + spendLim + '\n');
       } else {
-        callback()
+        callback();
       }
    });
 
@@ -236,6 +237,7 @@ var transactparser = parse({delimiter: ','}, function(err, data){
   });
 });
 
+// THIS LINE READS IN THE DATABASE
 //fs.createReadStream(inputFile).pipe(parser);
 
 // middleware:

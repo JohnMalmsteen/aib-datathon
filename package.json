@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "start2": "node --max_old_space_size=2000000 index.js"
   },
   "repository": {
     "type": "git",
