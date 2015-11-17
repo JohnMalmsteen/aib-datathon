@@ -19,14 +19,14 @@ Contents:
 ---
 The aim of this project is to showcase the use of a node api using five datasets given by AIB during the [AIB Datahack competition](https://www.aibdatahack.com/) on the 7th of November.
 The [project](https://gist.github.com/ianmcloughlin/53d5f1655bc276373625) is for Dr Ian Mc'Loughlin, Semantic Web & Linked Data Module, GMIT.    
+   
+We chose this project due to the fact that it is based on a real scenario and the datasets are quite huge and representational of real datasets.  
+    
+Banking is of huge importance in society, the more insight we can get into our banking data the better we can manage it.  
   
-We chose this project due to the fact that it is based on a real scenario and the datasets are quite huge and representational of real datasets.
+Our Banking-API parses the datasets with MongoDB into customer objects that can then be displayed in various ways via node/express routes in a self describing RESTful manner.  
   
-Banking is of huge importance in society, the more insight we can get into our banking data the better we can manage it.
-  
-Our Banking-API parses the datasets with MongoDB into customer objects that can then be displayed in various ways via node/express routes in a self describing RESTful manner.
-
-## Front-end & Back-end
+#### Front-end & Back-end
 
 We created are own back-end api to host the data to be consumed by this web app.  
 Both the front-end web app and the back-end api are hosted on different servers.  
@@ -102,7 +102,7 @@ Welcome to the Banking-API
 ### Retrieves all items  
 **req**  
 ```
-server.com/customer  
+datathon/customer  
 ```
 **res**  
 ```json
@@ -147,25 +147,25 @@ This will install all the depencies that are listed in the package.json file.
 ```sh
 > npm install
 ```
-
+  
 ### Notes:
 The first time you run this program you need to have the CSV files in the folder.  
-
+  
 You then uncomment line number 241: "//fs.createReadStream(inputFile).pipe(parser);"  
-
+  
 Run the program with the flag: "node --max_old_space_size=2000000 index.js"  
 as the size of the transaction.csv file leads to process out of memory GC errors  
   
 Once loaded into MongoDB you can export the datathon database and import it on your server.  
-
+  
 7 - References
 ---
-- We relied heavily on the [Node](https://nodejs.org/api/), [Express](http://expressjs.com/api.html) and [Mongo](https://docs.mongodb.org/manual/).
+- We relied heavily on the documentation websites for [Node](https://nodejs.org/api/), [Express](http://expressjs.com/api.html) and [Mongo](https://docs.mongodb.org/manual/).  
   
 8 - Team
 ---
 This project was created by Ronan Connolly & John Frizzell,  
 Software Development students in fourth year, term 1, GMIT  
-for the Semantic Web & Linked Data Module.
+for the Semantic Web & Linked Data Module.  
 
 <a href="https://github.com/RonanC"><img src="https://github.com/RonanC/DodgySpike/blob/master/PromoImages/Ronan.png" width="100px" height="100px" title="Ronan" alt="Ronan Image"/></a> <a href="https://github.com/JohnMalmsteen"><img src="https://avatars1.githubusercontent.com/u/7085486?v=3&s=400" width="100px" height="100px" title="Ronan" alt="Ronan Image"/></a>
