@@ -35,7 +35,7 @@
     "fs": "0.0.2",
     "kerberos": "0.0.17",
     "mongodb": "^2.0.48",
-    "mongoose": "^4.2.6",
+    "mongoose": "^4.2.7",
     "path": "^0.12.7"
   },
   "engine": {

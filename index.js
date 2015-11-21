@@ -267,7 +267,7 @@ app.set('view engine', 'jade');
 var customers = [];
 var customer;
 //var ronan = {"_id": "10", "name": "Ronan", "balance": 2300, "status": "open", "income": 2500, "payday": 1, "age":38, "sex": "M", "county": "LEITRIM", "transactions": [{"EPOCH": "11/02/2015", "CATEGORY": "Auto", "SUBCATEGORY": "Petrol/fuel", "TRANS_AMOUNT": 40, "TRANS_TYP": "D"}], "rent": [{"DATE": "05/08/2014", "AMMOUNT": 1000}, {"DATE": "02/09/2014": "AMMOUNT": 800}]};
-var john = {"_id": "11", "name": "John", "balance": 3200};
+// var john = {"_id": "11", "name": "John", "balance": 3200};
 // customers.push(ronan);
 // customers.push(john);
 
@@ -286,7 +286,7 @@ app.get('/', function(req, res) {
 
 app.get('/datathon', function(req, res) {
   var result = [];
-  result.push({id: 0, header: "Datathon", info: "Customer Insights"});
+  // result.push({id: 0, header: "Datathon", info: "Customer Insights"});
 
   res.contentType('text/html');
   res.status(200).sendFile(path.join(__dirname + '/views/datathon.html'));
@@ -299,22 +299,23 @@ app.get('/datathon', function(req, res) {
 //   res.status(200).send(JSON.stringify(result));
 // });
 
+var findCustomer = function(db, id, callback) {
+  var cursor = db.collection('customers').find( { "_id": id } );
+  cursor.each(function(err, doc) {
+    assert.equal(err, null);
+    if (doc !== null) {
+      callback(doc);
+      found = true;
+    } else {
+      if(found === false)
+        callback({"error": "Customer with id '" + req.params.id + "' not found"});
+    }
+   });
+};
+
 app.get('/datathon/customer/:id', function(req, res) {
   var result = null;
   var found = false;
-  var findCustomer = function(db, id, callback) {
-     var cursor =db.collection('customers').find( { "_id": id } );
-     cursor.each(function(err, doc) {
-        assert.equal(err, null);
-        if (doc !== null) {
-          callback(doc);
-          found = true;
-        } else {
-          if(found === false)
-            callback({"error": "Customer with id '" + req.params.id + "' not found"});
-        }
-     });
-  };
 
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
@@ -368,6 +369,9 @@ app.post('/datathon/customer', function(req, res) {
 app.delete('/datathon/customer/:id', function(req, res) {
   var result;
   var found = false;
+  console.log(customers.length);
+  console.log(customers);
+
   for (var i = 0; i < customers.length; i++) {
     if (parseInt(customers[i]._id) == req.params.id) {
       result = customers[i];
@@ -378,7 +382,7 @@ app.delete('/datathon/customer/:id', function(req, res) {
   }
 
   if (found === false) {
-    result = {"error": "Customer with id '" + customers[i]._id + "' not found"};
+    result = {"error": "Customer with id '" + req.params.id + "' not found"};
     res.status(404);
   }
   else{

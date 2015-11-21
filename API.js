@@ -30,7 +30,7 @@ app.set('view engine', 'jade');
 
 var router = express.Router();
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 5000;
 
 var url = 'mongodb://localhost:27017/datathon';
 mongoose.connect(url);
@@ -86,8 +86,8 @@ router.route('/datathon/customer')
 
 router.route('/datathon/customer/:id').get(function(req, res) {
      Customer.findById(req.params.id, function(err, customer) {
-         if (err)
-             res.send(err);
+        //  if (err)
+        //      res.send(err);
          res.json(customer);
      });
 });
