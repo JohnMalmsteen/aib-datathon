@@ -38,6 +38,11 @@ mongoose.connect(url);
 
 var Customer = require('./app/models/customer');
 
+var customerCount;
+
+Customer.count({}, function( err, count){
+    customerCount = count++;
+});
 
 router.get('/', function(req, res) {
    res.contentType('text/html');
@@ -55,22 +60,26 @@ router.get('/datathon', function(req, res){
 router.route('/datathon/customer')
    .post(function(req, res) {
       var customer = new Customer();      // create a new instance of the Customer model
-      customer._id = req.body._id;
+      customer._id = ++customerCount;
       customer.balance = req.body.balance;
       customer.income = req.body.income;
       customer.payday = req.body.payday;
       customer.age = req.body.age;
       customer.sex = req.body.sex;
       customer.county = req.body.county;
+      customer.status = true;
       customer.rent_transactions = [];
       customer.transaction = [];  // set the Customers details (comes form the request)
 
       // save the cusotmer and check for errors
       customer.save(function(err) {
-          if (err)
+          if (err){
              res.send(err);
+             customerCount--;
+          }
 
-          res.json({ message: 'Customer created!' });
+
+          res.json({ message: 'Customer created!', id: customer._id  });
       });
 
    });
@@ -86,7 +95,7 @@ router.route('/datathon/customer/:id').get(function(req, res) {
 router.route('/datathon/customer/:id').put(function(req, res) {
 
      // use our customer model to find the customer we want
-     Customer.findById(req.params.bear_id, function(err, customer) {
+     Customer.findById(req.params.id, function(err, customer) {
 
          if (err)
              res.send(err);
@@ -109,16 +118,99 @@ router.route('/datathon/customer/:id').put(function(req, res) {
      });
  });
 
+router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
+   Customer.findById(req.params.id, function(err, customer) {
+
+      if (err)
+          res.send(err);
+
+      if(customer.status === undefined){
+         customer.status = false;
+      }
+      else{
+         customer.status = !customer.status;
+      } // update the customers info
+
+      // save the customer
+      customer.save(function(err) {
+            if (err)
+              res.send(err);
+
+            if(customer.status === false){
+               res.json({ message: 'Customer deactivated' });
+            }
+            else{
+               res.json({ message: 'Customer reactivated' });
+            }
+      });
+
+  });
+});
+
  router.route('/datathon/customer/:id').delete(function(req, res) {
-     Customer.remove({
+     /*Customer.remove({
          _id: req.params.id
      }, function(err, customer) {
          if (err)
              res.send(err);
 
          res.json({ message: 'Successfully deleted' });
-     });
+     });*/
+
+     // I decided deleting data is not really a very big brother banky thing to do.
+     // keep everything forever:
+
+     Customer.findById(req.params.id, function(err, customer) {
+
+        if (err)
+            res.send(err);
+
+       customer.status = false;// update the customers info
+
+        // save the customer
+        customer.save(function(err) {
+               if (err)
+                  res.send(err);
+
+                res.json({ message: 'Customer deactivated' });
+        });
+
+    });
  });
+
+router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
+   Customer.findById(req.params.id, function(err, customer) {
+      if (err)
+          res.send(err);
+
+      var date = new Date();
+      customer.transactions.push({date: date, category: req.body.category, subcategory: req.body.subcategory, ammount: req.body.ammount, type: req.body.type});
+
+      customer.save(function(err) {
+          if (err)
+              res.send(err);
+
+          res.json({ message: 'Customer updated!' });
+      });
+   });
+});
+
+router.route('/datathon/customer/add/rent/:id').post(function(req, res){
+   Customer.findById(req.params.id, function(err, customer) {
+      if (err)
+          res.send(err);
+
+      var date =  new Date();
+      customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
+
+      customer.save(function(err) {
+          if (err)
+              res.send(err);
+
+          res.json({ message: 'Customer updated!' });
+      });
+   });
+});
 
 app.use('/', router);
 
