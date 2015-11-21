@@ -86,8 +86,10 @@ router.route('/datathon/customer')
 
 router.route('/datathon/customer/:id').get(function(req, res) {
      Customer.findById(req.params.id, function(err, customer) {
-        //  if (err)
-        //      res.send(err);
+         if (err){
+           console.log(err);
+           res.send(err);
+         }
          res.json(customer);
      });
 });
