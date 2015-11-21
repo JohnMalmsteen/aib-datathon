@@ -20,7 +20,7 @@ Contents:
 The aim of this project is to showcase the use of a node api using five datasets given by AIB during the [AIB Datahack competition](https://www.aibdatahack.com/) on the 7th of November.
 The [project](https://gist.github.com/ianmcloughlin/53d5f1655bc276373625) is for Dr Ian Mc'Loughlin, Semantic Web & Linked Data Module, GMIT.    
    
-We chose this project due to the fact that it is based on a real scenario and the datasets are quite huge and representational of real datasets.  
+We chose this project due to the fact that it is based on a real scenario and the datasets are quite substantial and representational of real datasets.  
     
 Banking is of huge importance in society, the more insight we can get into our banking data the better we can manage it.  
   
@@ -28,7 +28,7 @@ Our Banking-API parses the datasets with MongoDB into customer objects that can 
   
 #### Front-end & Back-end
 
-We created are own back-end api to host the data to be consumed by this web app.  
+We created our own back-end api to host the data to be consumed by this web app.  
 Both the front-end web app and the back-end api are hosted on different servers.  
 For information on the front-end web-app refer to the web-app github repository:   [Customer-Insights Web App](https://github.com/RonanC/customer-insights).  
   
@@ -69,13 +69,20 @@ It's a RESTful api with self-describing urls.
 With which you can use the GET, PUT, POST and DELETE HTTP verbs on to do various actions.  
 When the urls are queried a JSON object will be passed back.  
   
-### general actions  
- - /  
- - /datathon/customer/
+
   
-### specific actions  
- - /datathon/customer/:id
-  
+### Routes 
+Route | HTTP Method | Description | Body
+---------|------------|------------|------------
+/ | GET | basic api response html page
+/datathon/ | GET | basic instruction html page |
+/datathon/customer/ | POST | a new customer. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String,}
+/datathon/customer/:id | GET | a customer by ID |
+/datathon/customer/:id | PUT | update a customer by id. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String,}
+/datathon/customer/:id | DELETE | deactivates accounts | 
+/datathon/customer/togglestatus/:id | PUT | Deactivate or Reactivate a customer account |
+/datathon/customer/add/transaction/:id | POST | add a new transaction to the customers transaction list. | {category: String,subcategory: String,ammount: Number,type: String}
+/datathon/customer/add/rent/:id | POST | add a new rent transaction to a customers. | {ammount: Number}
   
 4 - Example use of the API
 ---
