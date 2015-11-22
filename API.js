@@ -159,6 +159,11 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
              customer.status = !customer.status;
           } // update the customers info
 
+          for(var transact in customer.transactions){
+             if(transact.ammount === null || isNaN(transact.ammount)){
+                transact.ammount = 0;
+             }
+          }
           // save the customer
           customer.save(function(err) {
                 if (err){

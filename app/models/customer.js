@@ -9,6 +9,7 @@ var TransactionSchema = new Schema({
    type: String
 });
 
+
 var RentTransactionSchema = new Schema({
    rent_date: Date,
    ammount: Number
@@ -26,5 +27,7 @@ var CustomerSchema = new Schema({
    transactions: [TransactionSchema],
    rent_transactions: [RentTransactionSchema]
 });
+
+
 
 module.exports = mongoose.model('Customer', CustomerSchema);
