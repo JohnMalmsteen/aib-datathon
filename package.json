@@ -4,9 +4,8 @@
   "description": "insights into customer data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "start2": "node --max_old_space_size=2000000 index.js"
+    "loadData": "node --max_old_space_size=2000000 data_loader.js",
+    "start": "node API.js"
   },
   "repository": {
     "type": "git",
