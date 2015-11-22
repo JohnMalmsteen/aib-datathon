@@ -78,7 +78,7 @@ Route | HTTP Method | Description | Body
 /datathon/ | GET | basic instruction html page |
 /datathon/customer/ | POST | a new customer. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String,}
 /datathon/customer/:id | GET | a customer by ID |
-/datathon/customer/:id | PUT | update a customer by id. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String,}
+/datathon/customer/:id | PUT | update a customer by id. | {payday: Number,county: String,}
 /datathon/customer/:id | DELETE | deactivates accounts | 
 /datathon/customer/togglestatus/:id | PUT | Deactivate or Reactivate a customer account |
 /datathon/customer/add/transaction/:id | POST | add a new transaction to the customers transaction list. | {category: String,subcategory: String,ammount: Number,type: String}
@@ -150,7 +150,7 @@ $ npm install
 ### Notes:
 The first time you run this program you need to have the CSV files in the folder.  
   
-You then uncomment line number 213 in the data_loader.js script: "//fs.createReadStream(inputFile).pipe(parser);"  
+You then uncomment line number 265 in the data_loader.js script: "//fs.createReadStream(inputFile).pipe(parser);"  
   
 Run the data_loader.js with the flag: "--max_old_space_size=2000000"  
 as the size of the transaction.csv file leads to process out of memory GC errors. 
