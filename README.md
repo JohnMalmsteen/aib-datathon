@@ -105,16 +105,6 @@ datathon/
 ```html
 Welcome to the Banking-API
 ```
-
-### Retrieves all items  
-**req**  
-```
-datathon/customer  
-```
-**res**  
-```json
-[{"_id":"34","balance":1500,"status":"open","income":2500,"payday":20,"age":33,"sex":"F","county":"CORK"}, {"_id":"23","balance":6000,"status":"open","income":1250,"payday":21,"age":34,"sex":"F","county":"CARLOW"}, {"_id":"3434","balance":2500,"status":"open","income":2500,"payday":20,"age":51,"sex":"F","county":"CORK"}, {"_id":"1212","balance":4500,"status":"open","income":2750,"payday":21,"age":36,"sex":"M","county":"DUBLIN"}]
-```
   
 ### Specific api query  
 **req**   
@@ -123,7 +113,7 @@ datathon/customer
 ```
 **res**  
 ```json
-{"_id":"34","balance":1500,"status":"open","income":2500,"payday":20,"age":33,"sex":"F","county":"CORK","rent_transactions":[{"rent_date":"2015-05-24T23:00:00.000Z","ammount":700},{"rent_date":"2015-08-23T23:00:00.000Z","ammount":700},{"rent_date":"2015-02-23T00:00:00.000Z","ammount":700},{"rent_date":"2015-03-23T00:00:00.000Z","ammount":700},{"rent_date":"2014-08-24T23:00:00.000Z","ammount":700},{"rent_date":"2014-11-24T00:00:00.000Z","ammount":700},{"rent_date":"2014-09-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-09-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-10-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-07-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-07-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-04-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-06-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-10-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-12-23T00:00:00.000Z","ammount":700},{"rent_date":"2015-01-23T00:00:00.000Z","ammount":700}]}
+{"_id":"34","balance":1500,"status":true,"income":2500,"payday":20,"age":33,"sex":"F","county":"CORK","rent_transactions":[{"rent_date":"2015-05-24T23:00:00.000Z","ammount":700},{"rent_date":"2015-08-23T23:00:00.000Z","ammount":700},{"rent_date":"2015-02-23T00:00:00.000Z","ammount":700},{"rent_date":"2015-03-23T00:00:00.000Z","ammount":700},{"rent_date":"2014-08-24T23:00:00.000Z","ammount":700},{"rent_date":"2014-11-24T00:00:00.000Z","ammount":700},{"rent_date":"2014-09-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-09-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-10-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-07-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-07-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-04-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-06-22T23:00:00.000Z","ammount":700},{"rent_date":"2015-10-22T23:00:00.000Z","ammount":700},{"rent_date":"2014-12-23T00:00:00.000Z","ammount":700},{"rent_date":"2015-01-23T00:00:00.000Z","ammount":700}]}
 ```
 
 ### Specific api query (error)  
@@ -141,7 +131,9 @@ datathon/customer
 ---
 ### API  
  - Created the web service with node and express
+ - Used the express router to manage the routes
  - MongoDB database
+ - mongoose.js to provide interaction with Mongo through a model - controller pattern
  - Deployed to [DigitalOcean](https://www.digitalocean.com/)
  - Used datasets as listed above from the AIB DataHack competition
   
@@ -152,22 +144,31 @@ datathon/customer
 Once you have cloned the git repo, you need to run the 'npm install' command.  
 This will install all the depencies that are listed in the package.json file.
 ```sh
-> npm install
+$ npm install
 ```
   
 ### Notes:
 The first time you run this program you need to have the CSV files in the folder.  
   
-You then uncomment line number 241: "//fs.createReadStream(inputFile).pipe(parser);"  
+You then uncomment line number 213 in the data_loader.js script: "//fs.createReadStream(inputFile).pipe(parser);"  
   
-Run the program with the flag: "node --max_old_space_size=2000000 index.js"  
-as the size of the transaction.csv file leads to process out of memory GC errors  
+Run the data_loader.js with the flag: "--max_old_space_size=2000000"  
+as the size of the transaction.csv file leads to process out of memory GC errors. 
+
+```sh
+$ node --max_old_space_size=2000000 data_loader.js
+```
   
 Once loaded into MongoDB you can export the datathon database and import it on your server.  
-  
+
+The API that serves up the data is run without any flags:
+```sh
+$ node API.js
+  ```
 7 - References
 ---
 - We relied heavily on the documentation websites for [Node](https://nodejs.org/api/), [Express](http://expressjs.com/api.html) and [Mongo](https://docs.mongodb.org/manual/).  
+- Also useful for learning the mongoose structure was this [blog](https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4).
   
 8 - Team
 ---
