@@ -85,80 +85,107 @@ router.route('/datathon/customer')
    });
 
 router.route('/datathon/customer/:id').get(function(req, res) {
-     Customer.findById(req.params.id, function(err, customer) {
-         if (err){
-           console.log(err);
-           res.send(err);
-         }
-         else{
-            res.json(customer);
-         }
+  if (!NaN(req.params.id)) {
+    if (req.params.id > 0 && req.params.id < customerCount) {
+      Customer.findById(req.params.id, function(err, customer) {
+          if (err){
+            console.log(err);
+            res.send(err);
+          }
+          else{
+             res.json(customer);
+          }
 
-     });
+      });
+    }
+    else{
+      res.send("ID must be a number between 0 and " + customerCount);
+    }
+  }else{
+    res.send("ID must be a positive number.");
+  }
 });
 
 router.route('/datathon/customer/:id').put(function(req, res) {
+  if (!NaN(req.params.id)) {
+    if (req.params.id > 0 && req.params.id < customerCount) {
+      // use our customer model to find the customer we want
+      Customer.findById(req.params.id, function(err, customer) {
 
-     // use our customer model to find the customer we want
-     Customer.findById(req.params.id, function(err, customer) {
+          if (err){
+            res.send(err);
+          }
+          else{
+            //  customer.balance = req.body.balance;
+            //  customer.income = req.body.income;
+             customer.payday =  req.body.payday;
+            //  customer.age = req.body.age;
+            //  customer.sex = req.body.sex;
+             customer.county = req.body.county;  // update the customers info
 
-         if (err){
-           res.send(err);
-         }
-         else{
-           //  customer.balance = req.body.balance;
-           //  customer.income = req.body.income;
-            customer.payday =  req.body.payday;
-           //  customer.age = req.body.age;
-           //  customer.sex = req.body.sex;
-            customer.county = req.body.county;  // update the customers info
+             // save the customer
+             customer.save(function(err) {
+               if (err){
+                 res.send(err);
+               }
+               else{
+                res.json({ message: 'Customer updated!' });
+               }
+             });
+          }
 
-            // save the customer
-            customer.save(function(err) {
-              if (err){
-                res.send(err);
-              }
-              else{
-               res.json({ message: 'Customer updated!' });
-              }
-            });
-         }
-
-     });
+      });
+    }
+    else{
+      res.send("ID must be a number between 0 and " + customerCount);
+    }
+  }else{
+    res.send("ID must be a positive number.");
+  }
  });
 
 router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
-   Customer.findById(req.params.id, function(err, customer) {
-
-      if (err){
-        res.send(err);
-      }
-      else{
-        if(customer.status === undefined){
-           customer.status = false;
+  if (!NaN(req.params.id)) {
+    if (req.params.id > 0 && req.params.id < customerCount) {
+      Customer.findById(req.params.id, function(err, customer) {
+        if (err){
+          res.send(err);
         }
         else{
-           customer.status = !customer.status;
-        } // update the customers info
+          if(customer.status === undefined){
+             customer.status = false;
+          }
+          else{
+             customer.status = !customer.status;
+          } // update the customers info
 
-        // save the customer
-        customer.save(function(err) {
-              if (err){
-                res.send(err);
-              }
-              else{
-                if(customer.status === false){
-                   res.json({ message: 'Customer deactivated' });
+          // save the customer
+          customer.save(function(err) {
+                if (err){
+                  res.send(err);
                 }
                 else{
-                   res.json({ message: 'Customer reactivated' });
+                  if(customer.status === false){
+                     res.json({ message: 'Customer deactivated' });
+                  }
+                  else{
+                     res.json({ message: 'Customer reactivated' });
+                  }
                 }
-              }
-            });
-        }
-  });
+              });
+          }
+    });
+    }
+    else{
+      res.send("ID must be a number between 0 and " + customerCount);
+    }
+  }else{
+    res.send("ID must be a positive number.");
+  }
+
 });
 
+// similar to togglestatus, but only deactivates
  router.route('/datathon/customer/:id').delete(function(req, res) {
      /*Customer.remove({
          _id: req.params.id
@@ -172,61 +199,92 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
      // I decided deleting data is not really a very big brother banky thing to do.
      // keep everything forever:
 
-     Customer.findById(req.params.id, function(err, customer) {
+     if (!NaN(req.params.id)) {
+       if (req.params.id > 0 && req.params.id < customerCount) {
+         Customer.findById(req.params.id, function(err, customer) {
 
-        if (err){
-          res.send(err);
-        }
-        else{
-          customer.status = false;// update the customers info
+            if (err){
+              res.send(err);
+            }
+            else{
+              customer.status = false;// update the customers info
 
-           // save the customer
-           customer.save(function(err) {
-                  if (err){
-                    res.send(err);
-                  }else{
-                    res.json({ message: 'Customer deactivated' });
-                  }
-           });
-        }
-    });
+               // save the customer
+               customer.save(function(err) {
+                      if (err){
+                        res.send(err);
+                      }else{
+                        res.json({ message: 'Customer deactivated' });
+                      }
+               });
+            }
+        });
+       }
+       else{
+         res.send("ID must be a number between 0 and " + customerCount);
+       }
+     }else{
+       res.send("ID must be a positive number.");
+     }
+
  });
 
 router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
-   Customer.findById(req.params.id, function(err, customer) {
-      if (err){
-          res.send(err);
-      }else{
-        var date = new Date();
-        customer.transactions.push({date: date, category: req.body.category, subcategory: req.body.subcategory, ammount: req.body.ammount, type: req.body.type});
+  if (!NaN(req.params.id)) {
+    if (req.params.id > 0 && req.params.id < customerCount) {
+      Customer.findById(req.params.id, function(err, customer) {
+         if (err){
+             res.send(err);
+         }else{
+           var date = new Date();
+           customer.transactions.push({date: date, category: req.body.category, subcategory: req.body.subcategory, ammount: req.body.ammount, type: req.body.type});
 
-        customer.save(function(err) {
-            if (err){
-              res.send(err);
-            }else{
-              res.json({ message: 'Customer updated!' });
-            }
-        });
-      }
-   });
+           customer.save(function(err) {
+               if (err){
+                 res.send(err);
+               }else{
+                 res.json({ message: 'Customer updated!' });
+               }
+           });
+         }
+      });
+    }
+    else{
+      res.send("ID must be a number between 0 and " + customerCount);
+    }
+  }else{
+    res.send("ID must be a positive number.");
+  }
+
 });
 
 router.route('/datathon/customer/add/rent/:id').post(function(req, res){
-   Customer.findById(req.params.id, function(err, customer) {
-      if (err){
-        res.send(err);
-      }else{
-        var date =  new Date();
-        customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
+  if (!NaN(req.params.id)) {
+    if (req.params.id > 0 && req.params.id < customerCount) {
+      Customer.findById(req.params.id, function(err, customer) {
+         if (err){
+           res.send(err);
+         }else{
+           var date =  new Date();
+           customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
 
-        customer.save(function(err) {
-            if (err)
-                res.send(err);
+           customer.save(function(err) {
+               if (err)
+                   res.send(err);
 
-            res.json({ message: 'Customer updated!' });
-        });
-      }
-   });
+               res.json({ message: 'Customer updated!' });
+           });
+         }
+      });
+    }
+    else{
+      res.send("ID must be a number between 0 and " + customerCount);
+    }
+  }else{
+    res.send("ID must be a positive number.");
+  }
+
+
 });
 
 app.use('/', router);
