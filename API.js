@@ -85,7 +85,7 @@ router.route('/datathon/customer')
    });
 
 router.route('/datathon/customer/:id').get(function(req, res) {
-  if (!NaN(req.params.id)) {
+  if (!isNaN(req.params.id)) {
     if (req.params.id > 0 && req.params.id < customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
           if (err){
@@ -107,7 +107,7 @@ router.route('/datathon/customer/:id').get(function(req, res) {
 });
 
 router.route('/datathon/customer/:id').put(function(req, res) {
-  if (!NaN(req.params.id)) {
+  if (!isNaN(req.params.id)) {
     if (req.params.id > 0 && req.params.id < customerCount) {
       // use our customer model to find the customer we want
       Customer.findById(req.params.id, function(err, customer) {
@@ -145,7 +145,7 @@ router.route('/datathon/customer/:id').put(function(req, res) {
  });
 
 router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
-  if (!NaN(req.params.id)) {
+  if (!isNaN(req.params.id)) {
     if (req.params.id > 0 && req.params.id < customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
         if (err){
@@ -199,7 +199,7 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
      // I decided deleting data is not really a very big brother banky thing to do.
      // keep everything forever:
 
-     if (!NaN(req.params.id)) {
+     if (!isNaN(req.params.id)) {
        if (req.params.id > 0 && req.params.id < customerCount) {
          Customer.findById(req.params.id, function(err, customer) {
 
@@ -230,7 +230,7 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
  });
 
 router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
-  if (!NaN(req.params.id)) {
+  if (!isNaN(req.params.id)) {
     if (req.params.id > 0 && req.params.id < customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
          if (err){
@@ -259,7 +259,7 @@ router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
 });
 
 router.route('/datathon/customer/add/rent/:id').post(function(req, res){
-  if (!NaN(req.params.id)) {
+  if (!isNaN(req.params.id)) {
     if (req.params.id > 0 && req.params.id < customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
          if (err){
