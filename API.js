@@ -77,9 +77,9 @@ router.route('/datathon/customer')
              res.send(err);
              customerCount--;
           }
-
-
-          res.json({ message: 'Customer created!', id: customer._id  });
+          else{
+            res.json({ message: 'Customer created!', id: customer._id  });
+          }
       });
 
    });
@@ -90,7 +90,10 @@ router.route('/datathon/customer/:id').get(function(req, res) {
            console.log(err);
            res.send(err);
          }
-         res.json(customer);
+         else{
+            res.json(customer);
+         }
+
      });
 });
 
@@ -99,23 +102,27 @@ router.route('/datathon/customer/:id').put(function(req, res) {
      // use our customer model to find the customer we want
      Customer.findById(req.params.id, function(err, customer) {
 
-         if (err)
-             res.send(err);
+         if (err){
+           res.send(err);
+         }
+         else{
+           //  customer.balance = req.body.balance;
+           //  customer.income = req.body.income;
+            customer.payday =  req.body.payday;
+           //  customer.age = req.body.age;
+           //  customer.sex = req.body.sex;
+            customer.county = req.body.county;  // update the customers info
 
-         customer.balance = req.body.balance;
-         customer.income = req.body.income;
-         customer.payday =  req.body.payday;
-         customer.age = req.body.age;
-         customer.sex = req.body.sex;
-         customer.county = req.body.county;  // update the customers info
-
-         // save the customer
-         customer.save(function(err) {
-             if (err)
-                 res.send(err);
-
-             res.json({ message: 'Customer updated!' });
-         });
+            // save the customer
+            customer.save(function(err) {
+              if (err){
+                res.send(err);
+              }
+              else{
+               res.json({ message: 'Customer updated!' });
+              }
+            });
+         }
 
      });
  });
@@ -123,29 +130,32 @@ router.route('/datathon/customer/:id').put(function(req, res) {
 router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
    Customer.findById(req.params.id, function(err, customer) {
 
-      if (err)
-          res.send(err);
-
-      if(customer.status === undefined){
-         customer.status = false;
+      if (err){
+        res.send(err);
       }
       else{
-         customer.status = !customer.status;
-      } // update the customers info
+        if(customer.status === undefined){
+           customer.status = false;
+        }
+        else{
+           customer.status = !customer.status;
+        } // update the customers info
 
-      // save the customer
-      customer.save(function(err) {
-            if (err)
-              res.send(err);
-
-            if(customer.status === false){
-               res.json({ message: 'Customer deactivated' });
-            }
-            else{
-               res.json({ message: 'Customer reactivated' });
-            }
-      });
-
+        // save the customer
+        customer.save(function(err) {
+              if (err){
+                res.send(err);
+              }
+              else{
+                if(customer.status === false){
+                   res.json({ message: 'Customer deactivated' });
+                }
+                else{
+                   res.json({ message: 'Customer reactivated' });
+                }
+              }
+            });
+        }
   });
 });
 
@@ -164,53 +174,58 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
 
      Customer.findById(req.params.id, function(err, customer) {
 
-        if (err)
-            res.send(err);
+        if (err){
+          res.send(err);
+        }
+        else{
+          customer.status = false;// update the customers info
 
-       customer.status = false;// update the customers info
-
-        // save the customer
-        customer.save(function(err) {
-               if (err)
-                  res.send(err);
-
-                res.json({ message: 'Customer deactivated' });
-        });
-
+           // save the customer
+           customer.save(function(err) {
+                  if (err){
+                    res.send(err);
+                  }else{
+                    res.json({ message: 'Customer deactivated' });
+                  }
+           });
+        }
     });
  });
 
 router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
    Customer.findById(req.params.id, function(err, customer) {
-      if (err)
+      if (err){
           res.send(err);
+      }else{
+        var date = new Date();
+        customer.transactions.push({date: date, category: req.body.category, subcategory: req.body.subcategory, ammount: req.body.ammount, type: req.body.type});
 
-      var date = new Date();
-      customer.transactions.push({date: date, category: req.body.category, subcategory: req.body.subcategory, ammount: req.body.ammount, type: req.body.type});
-
-      customer.save(function(err) {
-          if (err)
+        customer.save(function(err) {
+            if (err){
               res.send(err);
-
-          res.json({ message: 'Customer updated!' });
-      });
+            }else{
+              res.json({ message: 'Customer updated!' });
+            }
+        });
+      }
    });
 });
 
 router.route('/datathon/customer/add/rent/:id').post(function(req, res){
    Customer.findById(req.params.id, function(err, customer) {
-      if (err)
-          res.send(err);
+      if (err){
+        res.send(err);
+      }else{
+        var date =  new Date();
+        customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
 
-      var date =  new Date();
-      customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
+        customer.save(function(err) {
+            if (err)
+                res.send(err);
 
-      customer.save(function(err) {
-          if (err)
-              res.send(err);
-
-          res.json({ message: 'Customer updated!' });
-      });
+            res.json({ message: 'Customer updated!' });
+        });
+      }
    });
 });
 
