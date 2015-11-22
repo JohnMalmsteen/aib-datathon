@@ -14,31 +14,31 @@ Contents:
 6. Installation
 7. References
 8. Team
-  
+
 1 - About
 ---
 The aim of this project is to showcase the use of a node api using five datasets given by AIB during the [AIB Datahack competition](https://www.aibdatahack.com/) on the 7th of November.
 The [project](https://gist.github.com/ianmcloughlin/53d5f1655bc276373625) is for Dr Ian Mc'Loughlin, Semantic Web & Linked Data Module, GMIT.    
-   
+
 We chose this project due to the fact that it is based on a real scenario and the datasets are quite substantial and representational of real datasets.  
-    
+
 Banking is of huge importance in society, the more insight we can get into our banking data the better we can manage it.  
-  
+
 Our Banking-API parses the datasets with MongoDB into customer objects that can then be displayed in various ways via node/express routes in a self describing RESTful manner.  
-  
+
 #### Front-end & Back-end
 
 We created our own back-end api to host the data to be consumed by this web app.  
 Both the front-end web app and the back-end api are hosted on different servers.  
 For information on the front-end web-app refer to the web-app github repository:   [Customer-Insights Web App](https://github.com/RonanC/customer-insights).  
-  
+
 The front end (web app) is hosted on heroku:  
 [http://customer-insights.herokuapp.com/](http://customer-insights.herokuapp.com/)  
-  
+
 The back end (api) is hosted on digital ocean:  
 [http://178.62.9.141:5000/](http://178.62.9.141:5000/)  
 
-  
+
 2 - Datasets used
 ---
 We recieved the data from AIB during the [AIB Datahack competition](https://www.aibdatahack.com/) on the 7th of November.
@@ -55,35 +55,36 @@ We tried couch initially but we had queue errors to the vast amount of data bein
 
 **Demographics:**  
 10'001 rows  
-  
+
 **Rent:**   
 158'923 rows  
-  
+
 **Transactions:**  
 5'067'090 rows    
 
-  
+
 3 -  How to Query the API
 ---
 It's a RESTful api with self-describing urls.  
 With which you can use the GET, PUT, POST and DELETE HTTP verbs on to do various actions.  
 When the urls are queried a JSON object will be passed back.  
-  
 
-  
-### Routes 
+
+
+### Routes
 Route | HTTP Method | Description | Body
 ---------|------------|------------|------------
 / | GET | basic api response html page
 /datathon/ | GET | basic instruction html page |
-/datathon/customer/ | POST | a new customer. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String,}
-/datathon/customer/:id | GET | a customer by ID |
-/datathon/customer/:id | PUT | update a customer by id. | {payday: Number,county: String,}
-/datathon/customer/:id | DELETE | deactivates accounts | 
+/datathon/customer/ | POST | a new customer. | {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String}
+/datathon/customer/:id | GET | returns a customer by given id |
+/datathon/customer/:id | PUT | update a customer by id | {payday: Number,county: String}
+/datathon/customer/:id | DELETE | deactivates accounts |
 /datathon/customer/togglestatus/:id | PUT | Deactivate or Reactivate a customer account |
-/datathon/customer/add/transaction/:id | POST | add a new transaction to the customers transaction list. | {category: String,subcategory: String,ammount: Number,type: String}
-/datathon/customer/add/rent/:id | POST | add a new rent transaction to a customers. | {ammount: Number}
-  
+/datathon/customer/add/transaction/:id | POST | add a new transaction to the customers transaction list | {category: String,subcategory: String,ammount: Number,type: String}
+/datathon/customer/add/rent/:id | POST | add a new rent transaction to a customers | {ammount: Number}
+/datathon/categories | GET | returns all categories and subcategories |
+
 4 - Example use of the API
 ---
 ### Basic website message  
@@ -105,7 +106,7 @@ datathon/
 ```html
 Welcome to the Banking-API
 ```
-  
+
 ### Specific api query  
 **req**   
 ```
@@ -125,8 +126,8 @@ Welcome to the Banking-API
 ```json
 {"error":"Customer with id 'e2' not found"}
 ```
-  
-  
+
+
 5 - Tools & Environment used
 ---
 ### API  
@@ -136,8 +137,8 @@ Welcome to the Banking-API
  - mongoose.js to provide interaction with Mongo through a model - controller pattern
  - Deployed to [DigitalOcean](https://www.digitalocean.com/)
  - Used datasets as listed above from the AIB DataHack competition
-  
-  
+
+
 6 - Installation
 ---
 ### Dependencies  
@@ -146,19 +147,19 @@ This will install all the depencies that are listed in the package.json file.
 ```sh
 $ npm install
 ```
-  
+
 ### Notes:
 The first time you run this program you need to have the CSV files in the folder.  
-  
+
 You then uncomment line number 265 in the data_loader.js script: "//fs.createReadStream(inputFile).pipe(parser);"  
-  
+
 Run the data_loader.js with the flag: "--max_old_space_size=2000000"  
-as the size of the transaction.csv file leads to process out of memory GC errors. 
+as the size of the transaction.csv file leads to process out of memory GC errors.
 
 ```sh
 $ node --max_old_space_size=2000000 data_loader.js
 ```
-  
+
 Once loaded into MongoDB you can export the datathon database and import it on your server.  
 
 The API that serves up the data is run without any flags:
@@ -169,7 +170,7 @@ $ node API.js
 ---
 - We relied heavily on the documentation websites for [Node](https://nodejs.org/api/), [Express](http://expressjs.com/api.html) and [Mongo](https://docs.mongodb.org/manual/).  
 - Also useful for learning the mongoose structure was this [blog](https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4).
-  
+
 8 - Team
 ---
 This project was created by Ronan Connolly & John Frizzell,  

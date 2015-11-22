@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <title>Customer Insights API</title>
 
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <style>
       body { padding-top:50px; }
   </style>
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
@@ -16,10 +18,20 @@
           <p>Welcome to the customer insights API.</p>
           <p>This page lists how to use our API in order to gain valuable insights into customer demographics <br> and also how much of a "safe to spend balance" a customer has.</p>
           <br>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
           <h2>Routes</h2>
           <p>HTTP GET, POST, PUT and DELETE operations are in use.</p>
-          <p>They all return JSON objects.</p>
-          <br>
+          <!-- <p>They all return JSON objects.</p> -->
+        </div>
+      </div>
+
+<br><br>
+
+      <div class="row">
+        <div class="col-lg-4">
           <h3>GET</h3>
           <!-- <p><strong><a href="/datathon/customer">/datathon/customer</a></strong></p>
           <p>Returns all customer objects.</p>
@@ -27,30 +39,75 @@
           <p><strong><a href="/datathon/customer/:id">/datathon/customer/:id</a></strong></p>
           <p><strong>Example:</strong> <a href="/datathon/customer/1">/datathon/customer/1</a></p>
           <p>Returns the customer object with given id</p>
-          <br>
-          <br>
-          <h3>PUT</h3>
+        </div>
+
+        <div class="col-lg-4">
+          <h3>GET</h3>
+          <!-- <p><strong><a href="/datathon/customer">/datathon/customer</a></strong></p>
+          <p>Returns all customer objects.</p>
+          <br> -->
+          <p><strong><a href="/datathon/categories">/datathon/categories</a></strong></p>
+          <p>Returns all categories and subcategories</p>
+        </div>
+
+        <div class="col-lg-4">
+          <h3>DELETE</h3>
           <p><strong>/datathon/customer/:id</strong></p>
-          <p>Updates customer information</p>
-          <br>
-          <br>
+          <p>Deactivates account</p>
+        </div>
+      </div>
+
+<br><br>
+
+<div class="row">
+  <div class="col-lg-4">
+      <h3>PUT</h3>
+      <p><strong>/datathon/customer/:id</strong></p>
+      <p>Updates customer by id</p>
+      <pre>Body: {payday: Number,county: String}</pre>
+  </div>
+    <div class="col-lg-4">
+      <h3>PUT</h3>
+      <p><strong>/datathon/customer/:id</strong></p>
+      <p>Deactivate/Reactivate a customer account</p>
+  </div>
+</div>
+
+  <br><br>
+
+      <div class="row">
+        <div class="col-lg-4">
           <h3>POST</h3>
           <p><strong>/datathon/customer</strong></p>
           <p>Adds a new customers</p>
-          <br>
-          <br>
-          <h3>DELETE</h3>
-          <p><strong>/datathon/customer/:id</strong></p>
-          <p>Deletes the customer object with given id</p>
-          <br>
-          <br>
+          <pre>Body: {balance: Number, income: Number, payday: Number, age: Number, sex: String, county: String}</pre>
+        </div>
+        <div class="col-lg-4">
+          <h3>POST</h3>
+          <p><strong>/datathon/customer/add/transaction/:id</strong></p>
+          <p>add a new transaction to the customers transaction list</p>
+          <pre>Body: {category: String,subcategory: String,ammount: Number,type: String}</pre>
       </div>
+      <div class="col-lg-4">
+        <h3>POST</h3>
+        <p><strong>/datathon/customer/add/rent/:id</strong></p>
+        <p>add a new rent transaction to a customers</p>
+        <pre>Body: {ammount: Number}</pre>
+    </div>
   </div>
+</div>
 
+<br><br>
   <footer class="footer">
     <div class="container">
-      <p class="text-muted">Lean Mean Hacking Machine ©</p>
+      <!-- <hr> -->
+      <br>
+      <p class="text-muted">
+      Lean Mean Hacking Machine ©
+      <span class="pull-right"><a style="color:inherit" target="_blank" href="https://github.com/JohnMalmsteen/aib-datathon">Fork Us</a></span>
+      <p>
     </div>
   </footer>
+
 </body>
 </html>

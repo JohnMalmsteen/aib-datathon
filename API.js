@@ -34,6 +34,13 @@ app.use(function (req, res, next) {
 
 app.set('view engine', 'jade');
 
+//  sets paths and path names for other folders
+app.use(express.static(path.join(__dirname, 'views')));
+// app.use("/styles",  express.static(__dirname + '/views/styles'));
+// app.use("/scripts", express.static(__dirname + '/views/js'));
+// app.use("/images",  express.static(__dirname + '/views/images'));
+app.use("/",  express.static(__dirname + '/views'));
+
 /*
   use the router() to handle the routes
 */
@@ -86,7 +93,7 @@ router.get('/datathon', function(req, res){
 
 /*
   post method for the /datathon/customer route
-  originally we were going to have a get all customers route for GET here as well 
+  originally we were going to have a get all customers route for GET here as well
   but all customers is a pretty big transfer
 */
 router.route('/datathon/customer')
@@ -140,6 +147,116 @@ router.route('/datathon/customer/:id').get(function(req, res) {
   }else{
     res.send("ID must be a positive number.");
   }
+});
+
+// categories
+var categories = [
+  {"id": "0", "name": "Auto", "sub": [
+    {"name": "Auto Other"},
+    {"name": "Car park & Tolls"},
+    {"name": "Maintenance/Service & Parts"},
+    {"name": "Motor rescue"},
+    {"name": "Petrol/fuel"}
+  ]},
+  {"id": "1", "name": "Bills & Utilities", "sub": [
+    {"name": "Bills & Utilities Other"},
+    {"name": "Cable/Satellite TV & Internet"},
+    {"name": "Telephone/Mobile"}
+  ]},
+  {"id": "2", "name": "Family", "sub": [
+    {"name": "Childcare"},
+    {"name": "School/College Fees"}
+  ]},
+  {"id": "3", "name": "Finance & Banking", "sub": [
+    {"name": "Finance & Banking Other"}
+  ]},
+  {"id": "4", "name": "Health & Personal Care", "sub": [
+    {"name": "Alternative Health"},
+    {"name": "Dental care"},
+    {"name": "Doctor"},
+    {"name": "Hair & Beauty"},
+    {"name": "Health & Personal Care Other"},
+    {"name": "Hospital"},
+    {"name": "Optician"},
+    {"name": "Pharmacy"}
+  ]},
+  {"id": "5", "name": "Household/Home", "sub": [
+    {"name": "Computers & technology"},
+    {"name": "DIY/Home Improvement"},
+    {"name": "Electrical Goods"},
+    {"name": "Garden"},
+    {"name": "Household & Home Other"},
+    {"name": "Household Maintenance"},
+    {"name": "Textiles & Furnishings"}
+  ]},
+  {"id": "6", "name": "Insurance", "sub": [
+    {"name": "Insurance"}
+  ]},
+  {"id": "7", "name": "Leisure & Entertainment", "sub": [
+    {"name": "Bars & Clubs"},
+    {"name": "Cinema & Theatre"},
+    {"name": "Club Memberships"},
+    {"name": "Food & Dining"},
+    {"name": "Gaming"},
+    {"name": "Leisure & Entertainment Other "},
+    {"name": "Music"},
+    {"name": "Newspapers"}
+  ]},
+  {"id": "8", "name": "Miscellaneous", "sub": [
+    {"name": "Charities & Donations"},
+    {"name": "Legal"},
+    {"name": "Miscellaneous Other"},
+    {"name": "Postage/Courier"},
+    {"name": "Professional Services"},
+    {"name": "Stationary & Printing"},
+    {"name": "Subscriptions"}
+  ]},
+  {"id": "9", "name": "Pets", "sub": [
+    {"name": "Pet shop"},
+    {"name": "Veterinary"}
+  ]},
+  {"id": "10", "name": "Shopping", "sub": [
+    {"name": "Catalogue shopping"},
+    {"name": "Clothing & Accessories"},
+    {"name": "Department Store"},
+    {"name": "Groceries"},
+    {"name": "Online Shopping"},
+    {"name": "Shopping Other "},
+    {"name": "Sporting"},
+    {"name": "Toys & Games"}
+  ]},
+  {"id": "11", "name": "Tax", "sub": [
+    {"name": "Tax"}
+  ]},
+  {"id": "12", "name": "Travel/Transportation", "sub": [
+    {"name": "Air Travel"},
+    {"name": "Hotel/Lodging"},
+    {"name": "Public Transport"},
+    {"name": "Taxi"},
+    {"name": "Travel & Transportation Other"},
+    {"name": "Travel Agencies"},
+    {"name": "Vehicle rental"}
+  ]},
+  {"id": "13", "name": "Withdrawals & Transfers", "sub": [
+    {"name": "ATM"},
+    {"name": "Cash Advance"},
+    {"name": "Transfer"}
+  ]}
+];
+
+/*
+  GET request to get categories
+*/
+router.route('/datathon/categories').get(function(req, res) {
+  Customer.findById(req.params.id, function(err, customer) {
+      if (err){
+        console.log(err);
+        res.send(err);
+      }
+      else{
+         res.json(categories);
+      }
+  });
 });
 
 /*
