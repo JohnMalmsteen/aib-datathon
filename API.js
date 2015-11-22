@@ -86,7 +86,7 @@ router.route('/datathon/customer')
 
 router.route('/datathon/customer/:id').get(function(req, res) {
   if (!isNaN(req.params.id)) {
-    if (req.params.id > 0 && req.params.id < customerCount) {
+    if (req.params.id > 0 && req.params.id <= customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
           if (err){
             console.log(err);
@@ -108,7 +108,7 @@ router.route('/datathon/customer/:id').get(function(req, res) {
 
 router.route('/datathon/customer/:id').put(function(req, res) {
   if (!isNaN(req.params.id)) {
-    if (req.params.id > 0 && req.params.id < customerCount) {
+    if (req.params.id > 0 && req.params.id <= customerCount) {
       // use our customer model to find the customer we want
       Customer.findById(req.params.id, function(err, customer) {
 
@@ -146,7 +146,7 @@ router.route('/datathon/customer/:id').put(function(req, res) {
 
 router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
   if (!isNaN(req.params.id)) {
-    if (req.params.id > 0 && req.params.id < customerCount) {
+    if (req.params.id > 0 && req.params.id <= customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
         if (err){
           res.send(err);
@@ -200,7 +200,7 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
      // keep everything forever:
 
      if (!isNaN(req.params.id)) {
-       if (req.params.id > 0 && req.params.id < customerCount) {
+       if (req.params.id > 0 && req.params.id <= customerCount) {
          Customer.findById(req.params.id, function(err, customer) {
 
             if (err){
@@ -231,7 +231,7 @@ router.route('/datathon/customer/togglestatus/:id').put(function(req, res){
 
 router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
   if (!isNaN(req.params.id)) {
-    if (req.params.id > 0 && req.params.id < customerCount) {
+    if (req.params.id > 0 && req.params.id <= customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
          if (err){
              res.send(err);
@@ -260,7 +260,7 @@ router.route('/datathon/customer/add/transaction/:id').post(function(req, res){
 
 router.route('/datathon/customer/add/rent/:id').post(function(req, res){
   if (!isNaN(req.params.id)) {
-    if (req.params.id > 0 && req.params.id < customerCount) {
+    if (req.params.id > 0 && req.params.id <= customerCount) {
       Customer.findById(req.params.id, function(err, customer) {
          if (err){
            res.send(err);
@@ -269,10 +269,12 @@ router.route('/datathon/customer/add/rent/:id').post(function(req, res){
            customer.rent_transactions.push({rent_date: date, ammount: req.body.ammount});
 
            customer.save(function(err) {
-               if (err)
-                   res.send(err);
-
-               res.json({ message: 'Customer updated!' });
+               if (err){
+                 res.send(err);
+               }
+               else{
+                 res.json({ message: 'Customer updated!' });
+               }
            });
          }
       });
