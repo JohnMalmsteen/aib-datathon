@@ -38,7 +38,7 @@ app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'views')));
 // app.use("/styles",  express.static(__dirname + '/views/styles'));
 // app.use("/scripts", express.static(__dirname + '/views/js'));
-// app.use("/images",  express.static(__dirname + '/views/images'));
+app.use("/images",  express.static(__dirname + '/views/images'));
 app.use("/",  express.static(__dirname + '/views'));
 
 /*
