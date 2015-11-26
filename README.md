@@ -12,8 +12,9 @@ Contents:
 4. Example use of the API
 5. Tools & Environment used
 6. Installation
-7. References
-8. Team
+7. API Extension
+8. References
+9. Team
 
 1 - About
 ---
@@ -186,12 +187,34 @@ The API that serves up the data is run without any flags:
 ```sh
 $ node API.js
   ```
-7 - References
+
+7 - API Extension 
+---
+###"Safe to Spend" balance  
+During the AIB Datathon we calculated each customers (10'000) safe to spend balance based on how much they earn, when they get paid, how much they usually spend during each month and other factors.
+We intend to create a route and serve this data.
+We also intend to have this "Safe to Spend" balance be dynamic, so that new transactions and customer updates change the result.
+
+###Demographic Insights  
+We intend to have data analytic algorithms to calculate different customer demographics based on different input parameters like:
+- Age
+- County
+- Sex
+- Income
+- Payday
+- Balance
+
+#####An Example might be:    
+Show me the average balance of  
+customers by county  
+who are between the age of 20 to 30.  
+
+8 - References
 ---
 - We relied heavily on the documentation websites for [Node](https://nodejs.org/api/), [Express](http://expressjs.com/api.html) and [Mongo](https://docs.mongodb.org/manual/).  
 - Also useful for learning the mongoose structure was this [blog](https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4).
 
-8 - Team
+9 - Team
 ---
 This project was created by Ronan Connolly & John Frizzell,  
 Software Development students in fourth year, term 1, GMIT  
