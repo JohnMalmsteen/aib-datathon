@@ -204,6 +204,7 @@ We intend to have data analytic algorithms to calculate different customer demog
 - Payday
 - Balance
 
+This feature will turn the data into information.  
 
 #####An Example might be:
 Show me the average balance of  
