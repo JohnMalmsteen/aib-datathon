@@ -204,7 +204,8 @@ We intend to have data analytic algorithms to calculate different customer demog
 - Payday
 - Balance
 
-#####An Example might be:    
+
+#####An Example might be:
 Show me the average balance of  
 customers by county  
 who are between the age of 20 to 30.  
